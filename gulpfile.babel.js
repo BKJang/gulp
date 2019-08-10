@@ -8,6 +8,7 @@ import autoprefixer from 'gulp-autoprefixer';
 import minifyCSS from 'gulp-csso';
 import bro from 'gulp-bro';
 import babelify from 'babelify';
+import ghPages from 'gulp-gh-pages';
 
 sass.compiler = require("node-sass");
 
@@ -38,7 +39,7 @@ const pug = () => gulp
   .pipe(gpug())
   .pipe(gulp.dest(routes.pug.dest));
 
-const clean = () => del(["build"]);
+const clean = () => del(["build", ".publish"]);
 
 const webserver = () => gulp
   .src("build")
@@ -71,6 +72,10 @@ const js = () => gulp
   )
   .pipe(gulp.dest(routes.js.dest));
 
+const ghDeploy = () => gulp
+  .src("build/**/*")
+  .pipe(ghPages());
+
 const watch = () => {
   gulp.watch(routes.pug.watch, pug); // 2번째 인자는 어떤 작업을 수행할 것인지
   gulp.watch(routes.img.src, img);
@@ -82,6 +87,8 @@ const prepare = gulp.series([clean, img]);
 
 const assets = gulp.series([pug, styles, js]);
 
-const postDev = gulp.parallel([webserver, watch]); // parallel : 동시에 작업을 수행하고 싶을 떄
+const live = gulp.parallel([webserver, watch]); // parallel : 동시에 작업을 수행하고 싶을 떄
 
-export const dev = gulp.series([prepare, assets, postDev]);
+export const build = gulp.series([prepare, assets]);
+export const dev = gulp.series([build, live]);
+export const deploy = gulp.series([build, ghDeploy])
