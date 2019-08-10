@@ -5,6 +5,7 @@ import ws from 'gulp-webserver';
 
 const routes = {
   pug : {
+    watch: "src/**/*.pug",
     src: "src/*.pug",
     dest: "build"
   }
@@ -21,10 +22,14 @@ const webserver = () => gulp
   .src("build")
   .pipe(ws({ livereload: true, open: true }));
 
+const watch = () => {
+  gulp.watch(routes.pug.watch, pug); // 2번째 인자는 어떤 작업을 수행할 것인지
+};
+
 const prepare = gulp.series([clean]);
 
 const assets = gulp.series([pug]);
 
-const postDev = gulp.series([webserver]);
+const postDev = gulp.parallel([webserver, watch]); // parallel : 동시에 작업을 수행하고 싶을 떄
 
 export const dev = gulp.series([prepare, assets, postDev]);
