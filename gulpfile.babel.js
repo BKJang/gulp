@@ -3,6 +3,9 @@ import gpug from 'gulp-pug';
 import del from 'del';
 import ws from 'gulp-webserver';
 import gimage from 'gulp-image';
+import sass from 'gulp-sass';
+
+sass.compiler = require("node-sass");
 
 const routes = {
   pug : {
@@ -13,7 +16,12 @@ const routes = {
   img : {
     src: "src/img/*",
     dest: "build/img"
-  }
+  },
+  scss : {
+    watch: "src/scss/**/*.scss",
+    src: "src/scss/style.scss",
+    dest: "build/css"
+  },
 };
 
 const pug = () => gulp
@@ -32,14 +40,20 @@ const img = () => gulp
   .pipe(gimage())
   .pipe(gulp.dest(routes.img.dest));
 
+  const styles = () => gulp
+    .src(routes.scss.src)
+    .pipe(sass().on("error", sass.logError))
+    .pipe(gulp.dest(routes.scss.dest));
+
 const watch = () => {
   gulp.watch(routes.pug.watch, pug); // 2번째 인자는 어떤 작업을 수행할 것인지
   gulp.watch(routes.img.src, img);
+  gulp.watch(routes.scss.watch, styles);
 };
 
 const prepare = gulp.series([clean, img]);
 
-const assets = gulp.series([pug]);
+const assets = gulp.series([pug, styles]);
 
 const postDev = gulp.parallel([webserver, watch]); // parallel : 동시에 작업을 수행하고 싶을 떄
 
