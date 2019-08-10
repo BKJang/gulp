@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "gulp dev",
+    "build": "gulp build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/BKJang/lets-set-gulp/issues"
   },
-  "homepage": "https://github.com/BKJang/lets-set-gulp#readme"
+  "homepage": "https://github.com/BKJang/lets-set-gulp#readme",
+  "devDependencies": {
+    "gulp": "^4.0.2"
+  }
 }
